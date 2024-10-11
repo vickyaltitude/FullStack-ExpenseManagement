@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Day-to-Day-Expense-Tracker</title>
-    <link href="../public/style.css" rel="stylesheet">
+    <link href="/style.css" rel="stylesheet">
 </head>
 <body>
     <div class="signup-box">
@@ -17,21 +17,20 @@
                 <label for="name">
                  Name: 
                 </label>
-                <input type="text" name="name" id="name" placeholder="Your name" required>
+                <input type="text" name="name" id="name" placeholder="Your name" required autocomplete="name">
                 <label for="email">
                 Email:
                 </label>
-                <input type="email" name="email" id="email" placeholder="Your email" required>
+                <input type="email" name="email" id="email" placeholder="Your email" required autocomplete="email">
                 <label for="pswd">
                 Password
                 </label>
-                <input type="password" name="pswd" id="pswd" placeholder="Type password" required>
+                <input type="password" name="pswd" id="pswd" placeholder="Type password" required autocomplete="current-password">
+                <button id="signup-btn" type="button" >Submit & Sign-Up</button>
             </form>
 
         </div>
-        <div id="signup-footer">
-             <h3>Submit & Sign-Up</h3>
-        </div>
     </div>
+    <script src="/signuplogic.js"></script>
 </body>
 </html>
