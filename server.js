@@ -45,7 +45,7 @@ app.post('/login',(req,res)=>{
             res.status(404).json({msg: 'User Email not found!'})
         }else {
             if(datafetched[0].password != passwrd.toString()){
-                res.status(404).json({msg: 'Password entered is incorrect!'})
+                res.status(401).json({msg: 'Password entered is incorrect!'})
             }
             else if (datafetched[0].password == passwrd.toString()){
                 res.json({msg: 'User login successfull'})
