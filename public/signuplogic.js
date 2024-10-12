@@ -1,8 +1,9 @@
-const signupbtn = document.getElementById('signup-btn');
+const signupform = document.getElementById('signup-form');
+const showmsg = document.getElementById('show-msg');
+signupform.addEventListener('submit',userInsert);
 
-signupbtn.addEventListener('click',userInsert);
-
-async function userInsert(){
+async function userInsert(e){
+    e.preventDefault();
    const nameValue = document.getElementById('name').value;
    const emailValue = document.getElementById('email').value;
    const passwd = document.getElementById('pswd').value;
@@ -24,7 +25,19 @@ async function userInsert(){
    if (!sendUser.ok) {
        alert('User email already exists'); 
    } else if(sendUser.ok) {
-       alert('User successfully created');
+      
+       const successMsg = document.createElement('p');
+    successMsg.innerText = 'User successfully created!! Please wait...'
+    successMsg.style.fontSize = "1.4rem";
+    successMsg.style.color = 'green';
+    signupform.appendChild(successMsg);
+
+    setTimeout(()=>{
+            signupform.removeChild(successMsg);
+            window.location.href = 'http://localhost:6969/login';
+           
+          
+    },2000)
    }
    
 }

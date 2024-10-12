@@ -7,19 +7,14 @@
     <link href="/style.css" rel="stylesheet">
 </head>
 <body>
-    <div id="signup-box">
-        <div id="signup-header">
-             <h3>Sign-Up</h3>
+    <div id="login-box">
+        <div id="login-header">
+             <h3>Login</h3>
         </div>
         <div id ='form-box'>
 
-            <form id="signup-form">
-                <p class="namefield">
-                <label for="name">
-                 Name: 
-                </label>
-                <input type="text" name="name" id="name" placeholder="Your name"  autocomplete="name" required>
-            </p>
+            <form id="login-form">
+              
             <p class="emailfield">
                 <label for="email">
                 Email:
@@ -32,21 +27,18 @@
                 </label>
                 <input type="password" name="pswd" id="pswd" placeholder="Type password"  autocomplete="current-password" required>
             </p>
-            <button id="signup-btn" type="submit" >Submit & Sign-Up</button>
+            <button id="login-btn" type="submit" >Login Now</button>
             </form>
             
         </div>
-        <div class="already-an-user">
-            <a href="/login">Have an account already</a>
-        </div>
-        <div id="show-msg">
-            
+        <div class="new-user">
+            <a href="/">Create an account</a>
         </div>
         
-        <div class="signup-footer">
+        <div class="login-footer">
             
        </div>
     </div>
-    <script src="/signuplogic.js"></script>
+    <script src="/loginlogic.js"></script>
 </body>
 </html>
