@@ -34,7 +34,7 @@ async function userlogin(e){
             loginform.removeChild(unfMsg);
            
           
-    },5000)
+    },3000)
 
        }else if(parsed.msg == "Password entered is incorrect!"){
         const passwrdMsg = document.createElement('p');
@@ -47,7 +47,7 @@ async function userlogin(e){
             loginform.removeChild(passwrdMsg);
            
           
-    },5000)
+    },3000)
        }
    } else if(sendUser.ok) {
       
@@ -59,9 +59,10 @@ async function userlogin(e){
 
     setTimeout(()=>{
         loginform.removeChild(successMsg);
+        window.location.href = 'http://localhost:6969/home';
        
       
-},5000)
+},3000)
 
    }
    

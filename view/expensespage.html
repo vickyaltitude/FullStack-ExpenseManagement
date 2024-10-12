@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Day-to-Day-Expense-Tracker</title>
+    <link href="/expenses.css" rel="stylesheet">
+</head>
+<body>
+    <div id="exp-header">
+       <form id="exp-form">
+        <p>
+        <label for="exp-amount">
+            Expense Amount:
+        </label>
+        <input id="exp-amount" type="number" min="1" step="0.1" required>
+        </p>
+
+        <p>
+        <label for="exp-description">
+            Description:
+        </label>
+        <input id="exp-description" type="text" required>
+        </p>
+
+        <p>
+            <label>
+                Category:
+            </label for='exp-category'>
+            <select id="exp-category" name="exp-category" required>
+                <option>
+                   Vacation
+                </option>
+                <option>
+                    Party
+                </option>
+                <option>
+                    Purchase
+                </option>
+                <option>
+                    Food
+                </option>
+                <option>
+                    Cinema
+                </option>
+                <option>
+                    Others
+                </option>
+            </select>
+         </p>
+         <p>
+            <button type="submit" id="add-exp">Add Expense</button>
+         </p>
+         
+       </form>
+
+    </div>
+    <div class="table-container">
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>Amount</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Data 1</td>
+                    <td>Data 2</td>
+                    <td>Data 3</td>
+                    <td><button class="edit-btn">Edit</button> <button class="delete-btn">Delete</button></td>
+                </tr>
+                <tr>
+                    <td>Data 1</td>
+                    <td>Data 2</td>
+                    <td>Data 3</td>
+                    <td><button class="edit-btn">Edit</button> <button class="delete-btn">Delete</button></td>
+                </tr>
+             
+            </tbody>
+        </table>
+    </div>
+    
+
+    <script src="/expenseslogic.js"></script>
+</body>
+</html>

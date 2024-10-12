@@ -14,6 +14,10 @@ app.get('/',(req,res)=>{
     res.sendFile(path.join(__dirname,'view','signup.html'))
 })
 
+app.get('/home',(req,res)=>{
+    res.sendFile(path.join(__dirname,'view','expensespage.html'))
+})
+
 app.post('/insertuser',(req,res)=>{
 
      const name = req.body.name;

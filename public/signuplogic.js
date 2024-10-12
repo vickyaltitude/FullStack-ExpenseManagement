@@ -32,7 +32,7 @@ async function userInsert(e){
             signupform.removeChild(errorMsg);
            
           
-    },5000)
+    },3000)
    } else if(sendUser.ok) {
       
        const successMsg = document.createElement('p');
@@ -46,7 +46,7 @@ async function userInsert(e){
             window.location.href = 'http://localhost:6969/login';
            
           
-    },5000)
+    },3000)
    }
    
 }
