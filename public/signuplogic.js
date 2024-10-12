@@ -20,10 +20,19 @@ async function userInsert(e){
     })
    })
 
-   
 
    if (!sendUser.ok) {
-       alert('User email already exists'); 
+    const errorMsg = document.createElement('p');
+    errorMsg.innerText = 'User Email already exists!!  Please login'
+    errorMsg.style.fontSize = "1.4rem";
+    errorMsg.style.color = 'red';
+    signupform.appendChild(errorMsg);
+
+    setTimeout(()=>{
+            signupform.removeChild(errorMsg);
+           
+          
+    },5000)
    } else if(sendUser.ok) {
       
        const successMsg = document.createElement('p');
@@ -37,7 +46,8 @@ async function userInsert(e){
             window.location.href = 'http://localhost:6969/login';
            
           
-    },2000)
+    },5000)
    }
    
 }
+

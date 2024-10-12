@@ -34,7 +34,7 @@ async function userlogin(e){
             loginform.removeChild(unfMsg);
            
           
-    },3000)
+    },5000)
 
        }else if(parsed.msg == "Password entered is incorrect!"){
         const passwrdMsg = document.createElement('p');
@@ -47,7 +47,7 @@ async function userlogin(e){
             loginform.removeChild(passwrdMsg);
            
           
-    },3000)
+    },5000)
        }
    } else if(sendUser.ok) {
       
@@ -61,7 +61,7 @@ async function userlogin(e){
         loginform.removeChild(successMsg);
        
       
-},3000)
+},5000)
 
    }
    

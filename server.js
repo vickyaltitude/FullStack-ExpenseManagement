@@ -4,6 +4,7 @@ const app = express();
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 6969;
 const ds = require('./util/data');
+const bcrypt = require('bcrypt');
 
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
@@ -18,14 +19,22 @@ app.post('/insertuser',(req,res)=>{
      const name = req.body.name;
      const email = req.body.email;
      const passwd = req.body.pswd;
-     console.log(name,email,passwd)
+
+     bcrypt.hash(passwd,10, (err,hash)=>{
+        if(err){
+            console.log(err)
+        }
+        else{
+           ds.execute('INSERT INTO `users` (name,email,password) VALUES(?,?,?)',[name,email,hash]).then(resp =>{
+                res.status(200).json({msg: 'user added successfully'})
+            }).catch(err => {
+                console.log(err) ;
+                res.status(404).json({msg: 'User already exist'});
+            });
     
-        ds.execute('INSERT INTO `users` (name,email,password) VALUES(?,?,?)',[name,email,passwd]).then(resp =>{
-            res.status(200).json({msg: 'user added successfully'})
-        }).catch(err => {
-            console.log(err) ;
-            res.status(404).json({error: err});
-        });
+        }
+
+     })
     
 })
 
@@ -44,12 +53,20 @@ app.post('/login',(req,res)=>{
         if(datafetched.length == 0){
             res.status(404).json({msg: 'User Email not found!'})
         }else {
-            if(datafetched[0].password != passwrd.toString()){
-                res.status(401).json({msg: 'Password entered is incorrect!'})
-            }
-            else if (datafetched[0].password == passwrd.toString()){
-                res.json({msg: 'User login successfull'})
-            }
+
+            bcrypt.compare(passwrd.toString(),datafetched[0].password,(err,result)=>{
+
+                if(err){
+                    res.status(500).json({msg: 'Something went wrong!!'})
+                }
+                if(result == true){
+                    res.json({msg: 'User login successfull'})
+                }
+                else{
+                    res.status(401).json({msg: 'Password entered is incorrect!'})
+                }
+            })
+           
         }
     }).catch(err => console.log(err));
    
