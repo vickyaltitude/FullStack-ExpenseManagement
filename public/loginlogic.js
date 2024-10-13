@@ -21,7 +21,7 @@ async function userlogin(e){
    let parsed = await sendUser.json();
 
    if (!sendUser.ok) {
-       console.log(parsed.msg)
+       
        if(parsed.msg == "User Email not found!"){
          
         const unfMsg = document.createElement('p');
@@ -50,7 +50,7 @@ async function userlogin(e){
     },3000)
        }
    } else if(sendUser.ok) {
-      
+      localStorage.setItem('userId',parsed.userId);
        const successMsg = document.createElement('p');
     successMsg.innerText = 'Login successful'
     successMsg.style.fontSize = "1.4rem";
