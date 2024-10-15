@@ -59,10 +59,16 @@ async function userlogin(e){
 
     setTimeout(()=>{
         loginform.removeChild(successMsg);
+        if(parsed.ispremium){
+
+        window.location.href = 'http://localhost:6969/premiumUserHome';
+            
+        }else{
+           
         window.location.href = 'http://localhost:6969/home';
-       
+        }
       
-},3000)
+},1000)
 
    }
    

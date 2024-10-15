@@ -7,6 +7,9 @@ const ds = require('./util/data');
 const bcrypt = require('bcrypt');
 const generatedToken = require('./jwt');
 const jwt = require('jsonwebtoken');
+const Razorpay = require('razorpay');
+require('dotenv').config();
+
 
 
 app.use(express.json());
@@ -56,7 +59,6 @@ app.post('/login',(req,res)=>{
 
         const datafetched = resp[0];
 
-
         if(datafetched.length == 0){
             res.status(404).json({msg: 'User Email not found!'})
         }else {
@@ -67,7 +69,7 @@ app.post('/login',(req,res)=>{
                     res.status(500).json({msg: 'Something went wrong!!'})
                 }
                 if(result == true){
-                    res.json({msg: 'User login successfull',userId: generatedToken.encryptuserid(datafetched[0].id,datafetched[0].name)})
+                    res.json({msg: 'User login successfull',ispremium:datafetched[0].ispremium,userId: generatedToken.encryptuserid(datafetched[0].id,datafetched[0].name)})
                 }
                 else{
                     res.status(401).json({msg: 'Password entered is incorrect!'})
@@ -130,6 +132,77 @@ app.delete('/userdelete',(req,res)=>{
         res.json({msg:'checking'});
     }).catch(err => console.log(err));
    
+})
+
+app.get('/buypremium',(req,res)=>{
+
+    const receivedhead = req.header("Authorization");
+    const token = receivedhead.split(' ')[1];
+    const user = jwt.verify(token,"mysecretcode");
+      console.log(user)
+     let rzp = new Razorpay({
+        key_id : process.env.Key_Id,
+        key_secret: process.env.key_secret_id
+     });
+    let amount = 100;
+    console.log(process.env.Key_Id,process.env.key_secret_id)
+     rzp.orders.create({amount: amount, currency: 'INR'},(err,order)=>{
+           if(err){
+            console.log(err)
+           }else{
+            ds.execute('INSERT INTO `premium_transactions` (user_name,order_id,user_id,status) VALUES(?,?,?,?)',[user.userName,order.id,user.userId,'pending']).then(resp =>{
+
+                res.json({order_details : order,key_id: process.env.Key_Id });
+
+            }).catch(err => console.log(err)) 
+           
+           }
+     })
+
+})
+
+app.post('/updatetransaction',(req,res)=>{
+    const receivedhead = req.header("Authorization");
+    const token = receivedhead.split(' ')[1];
+    const user = jwt.verify(token,"mysecretcode");
+   
+   if(req.body.payment_id){
+    ds.execute('UPDATE `premium_transactions` SET payment_id = ?,status = ? WHERE order_id =?',[req.body.payment_id,"succes",req.body.order_id]).then(resp => {
+        res.json({msg: 'payment success'});
+
+
+
+    }).catch(err =>{
+
+        console.log(err)
+
+    })
+
+    ds.execute('UPDATE users SET ispremium = ? WHERE id =?',[true,user.userId]).then(resp => {
+     
+
+    }).catch(err =>{
+
+        console.log(err)
+
+    })
+   
+   }else{
+
+    ds.execute('UPDATE `premium_transactions` SET status = ? WHERE order_id = ?',["failed",req.body.order_id]).then(resp => {
+        res.json({msg: 'payment failed'});
+    }).catch(err =>{
+
+        console.log(err)
+
+    })
+  
+   }
+
+})
+
+app.get('/premiumUserHome',(req,res)=>{
+    res.sendFile(path.join(__dirname,'view','premiumUser.html'))
 })
 
 app.listen(PORT,()=> console.log(`server is successfully running on port ${PORT}`))
