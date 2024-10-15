@@ -25,9 +25,16 @@ body{
     width: 100%;
     height: 100%;
     display: flex;
+    align-items: center; 
     justify-content: space-evenly;
-    align-items: center;
-    padding: 0px 30px;
+    padding: 20px; 
+}
+#exp-form p {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    width: 100%;
+    margin: 10px 0; 
 }
 
 input{
@@ -151,7 +158,7 @@ select{
     top: 0;
     width: 100%; 
     height: 100%; 
-    overflow: hidden; /* Prevents scrolling */
+    overflow: hidden;
     background-color: rgba(0, 0, 0, 0.4); 
   
 }
@@ -161,10 +168,10 @@ select{
     padding: 20px;
     border: 1px solid #888;
     width: 30%; 
-    max-height: 80%; /* Maximum height for the modal */
-    overflow-y: auto; /* Scroll if content exceeds max height */
+    max-height: 80%; 
+    overflow-y: auto;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    border-radius: 15px; /* Optional: round the corners */
+    border-radius: 15px; 
 }
 
 
@@ -248,4 +255,22 @@ select{
 }
 #id-to-delete-exp{
 display: none;
+}
+
+#gold{
+    background-color: #d4af37; 
+    color: white;
+    border: 3px solid black; 
+    border-radius: 15px; 
+    padding: 10px 20px; 
+    font-size: 1.2rem;
+    cursor: pointer; 
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#gold:hover{
+   
+        background-color: #b59426; 
+        transform: scale(1.05); 
+    
 }

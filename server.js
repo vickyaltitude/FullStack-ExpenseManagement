@@ -205,4 +205,25 @@ app.get('/premiumUserHome',(req,res)=>{
     res.sendFile(path.join(__dirname,'view','premiumUser.html'))
 })
 
+app.get('/premiumdashboard',(req,res)=>{
+    res.sendFile(path.join(__dirname,'view','dashboard.html'))
+
+})
+
+app.get('/getpremiumdata',(req,res)=>{
+    ds.execute(`SELECT SUM(expense_details.amount) AS total , expense_details.user_id ,users.name , users.email
+    FROM expense_details 
+    INNER JOIN users
+    ON expense_details.user_id = users.id
+    GROUP BY expense_details.user_id , users.name,users.email
+    ORDER BY total DESC
+    ;`).then(resp =>{
+        console.log(resp[0])
+        res.json({msg: 'data received successfully' , data: resp[0]});
+    }).catch(err => console.log(err))
+
+   
+})
+
+
 app.listen(PORT,()=> console.log(`server is successfully running on port ${PORT}`))

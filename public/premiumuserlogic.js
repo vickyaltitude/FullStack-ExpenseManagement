@@ -146,4 +146,10 @@ window.onclick = function(event) {
     }
 }
 
+let prmpage = document.getElementById('gold');
+
+prmpage.addEventListener('click',()=>{
+    window.location.href = 'http://localhost:6969/premiumdashboard';
+})
+
 
