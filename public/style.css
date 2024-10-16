@@ -14,7 +14,7 @@ body{
     font-family: "Playfair Display", serif;
 }
 
-#signup-box,#login-box{
+#signup-box,#login-box,#forg-box{
     width: 450px;
     height: 550px;
     background: #F4F4F4;
@@ -28,7 +28,7 @@ body{
     color: #333333;
 
 }
-#signup-header,#login-header{
+#signup-header,#login-header,#forg-header{
     background: #5B9BD5;
     width: 100%;
     height: 15%;

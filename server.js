@@ -11,6 +11,15 @@ const Razorpay = require('razorpay');
 require('dotenv').config();
 const Sequelize = require('sequelize');
 
+
+const Sib = require('sib-api-v3-sdk');
+const client = Sib.ApiClient.instance;
+const apikey = client.authentications['api-key'];
+apikey.apiKey = process.env.brevo_api_key; // Ensure this is set correctly
+const transEmailApi = new Sib.TransactionalEmailsApi();
+
+
+
 const sequelize = new Sequelize('expense_tracker','root','Welcome@123',{
     dialect: 'mysql',
     host: 'localhost'
@@ -291,6 +300,50 @@ app.get('/getpremiumdata',(req,res)=>{
 
    
 })
+
+app.get('/forgotpassword',(req,res)=>{
+
+    res.sendFile(path.join(__dirname,'view','forgotpassword.html'))
+ 
+    
+ })
+
+ app.post('/forgotpassword',(req,res)=>{
+
+    console.log(req.body);
+    if(req.body.emailfield){
+        const receiverEmail = req.body.emailfield
+        const sender = {
+            email: 'vignvick3005@gmail.com'
+        }
+        const receiver = [
+            {
+                email : receiverEmail
+            }
+        ]
+
+        transEmailApi.sendTransacEmail({
+            sender,
+            to: receiver,
+            subject: 'Password reset link from Day-to-Day Expense Tracker Application',
+            textContent: 'Please reset your password through this link: <reset_link_here>'
+        })
+        .then(response => {
+            console.log(response);
+            res.json({ msg: 'Password reset email sent successfully.' });
+        })
+        .catch(error => {
+            console.error('Error details:', error.response ? error.response.data : error);
+            if (error.response) {
+                console.error('Status:', error.response.status);
+                console.error('Data:', error.response.data);
+            }
+            res.status(500).json({ msg: 'Failed to send password reset email. Please try again later.' });
+        });
+    }
+ 
+    
+ })
 
 
 app.listen(PORT,()=> console.log(`server is successfully running on port ${PORT}`))
