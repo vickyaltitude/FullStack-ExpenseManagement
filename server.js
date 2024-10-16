@@ -10,6 +10,7 @@ const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
 require('dotenv').config();
 const Sequelize = require('sequelize');
+const { v4: uuidv4 } = require('uuid');
 
 
 const Sib = require('sib-api-v3-sdk');
@@ -321,16 +322,26 @@ app.get('/forgotpassword',(req,res)=>{
                 email : receiverEmail
             }
         ]
-
+        const uuid = uuidv4().toString();
         transEmailApi.sendTransacEmail({
             sender,
             to: receiver,
             subject: 'Password reset link from Day-to-Day Expense Tracker Application',
-            textContent: 'Please reset your password through this link: <reset_link_here>'
+             htmlContent: `<p>Please reset your password through this link: <a href="http://localhost:6969/resetpassword/${uuid}">Reset Password</a></p>`
         })
         .then(response => {
-            console.log(response);
-            res.json({ msg: 'Password reset email sent successfully.' });
+
+            console.log(response,receiverEmail);
+            ds.execute('SELECT id FROM users WHERE email = ?',[receiverEmail]).then(resp =>{
+                 const userid = resp[0]
+                 console.log(userid,uuid)
+                
+             ds.execute('INSERT INTO `forgot_password_requests` VALUES (?,?,?)',[uuid,userid[0].id,true]).then(resp =>{
+                res.json({ msg: 'Password reset email sent successfully.' });
+             }).catch(err => console.log(err));
+              
+            }).catch(err => console.log(err))
+           
         })
         .catch(error => {
             console.error('Error details:', error.response ? error.response.data : error);
@@ -344,6 +355,56 @@ app.get('/forgotpassword',(req,res)=>{
  
     
  })
+
+ app.get('/resetpassword/:id',(req,res)=>{
+    const uuidreceived = req.params.id
+    console.log(uuidreceived)
+    ds.execute('SELECT * FROM `forgot_password_requests` WHERE id = ?',[uuidreceived]).then(resp =>{
+
+        let responseData = resp[0];
+
+        if(responseData[0].isactive){
+
+            ds.execute('UPDATE `forgot_password_requests` SET isactive = ? WHERE id = ?',[false,responseData[0].id])
+            res.sendFile(path.join(__dirname,'view','resetform.html'))
+        }else{
+            res.status(404).json({msg: 'URL for password reset has been expired!  Please try again'})
+        }
+      
+       
+    }).catch(err => console.log(err))
+     
+ })
+
+app.post('/resetpassworddatabase',(req,res)=>{
+     
+    const received = req.body.passwordconfirmation;
+     console.log(req.body)
+     ds.execute('SELECT user_id FROM `forgot_password_requests` WHERE id = ?',[req.body.id]).then(resp =>{
+        let id = resp[0]
+        console.log(id[0])
+        bcrypt.hash(received,10, (err,hash)=>{
+            if(err){
+                console.log(err)
+            }
+            else{
+               ds.execute('UPDATE `users`  SET password = ? WHERE id = ?',[hash,id[0].user_id]).then(async resp =>{
+               
+                    res.status(200).json({msg: 'user added successfully'})
+                }).catch( async err => {
+                  
+                    console.log(err) ;
+                    res.status(404).json({msg: 'User already exist'});
+                });
+        
+            }
+    
+         })
+     }).catch(err => console.log(err))
+   
+    
+
+})
 
 
 app.listen(PORT,()=> console.log(`server is successfully running on port ${PORT}`))
