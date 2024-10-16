@@ -9,6 +9,12 @@ const generatedToken = require('./jwt');
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
 require('dotenv').config();
+const Sequelize = require('sequelize');
+
+const sequelize = new Sequelize('expense_tracker','root','Welcome@123',{
+    dialect: 'mysql',
+    host: 'localhost'
+})
 
 
 
@@ -24,8 +30,8 @@ app.get('/home',(req,res)=>{
     res.sendFile(path.join(__dirname,'view','expensespage.html'))
 })
 
-app.post('/insertuser',(req,res)=>{
-
+app.post('/insertuser', async (req,res)=>{
+     let tran = await sequelize.transaction();
      const name = req.body.name;
      const email = req.body.email;
      const passwd = req.body.pswd;
@@ -35,9 +41,11 @@ app.post('/insertuser',(req,res)=>{
             console.log(err)
         }
         else{
-           ds.execute('INSERT INTO `users` (name,email,password) VALUES(?,?,?)',[name,email,hash]).then(resp =>{
+           ds.execute('INSERT INTO `users` (name,email,password) VALUES(?,?,?)',[name,email,hash],{transaction : tran}).then(async resp =>{
+            await tran.commit();
                 res.status(200).json({msg: 'user added successfully'})
-            }).catch(err => {
+            }).catch( async err => {
+               await tran.rollback();
                 console.log(err) ;
                 res.status(404).json({msg: 'User already exist'});
             });
@@ -93,33 +101,40 @@ app.get('/expenses',(req,res)=>{
     }).catch(err => console.log(err));
 })
 
-app.post('/expenses',(req,res)=>{
+app.post('/expenses',async (req,res)=>{
+    let tran = await sequelize.transaction();
     const receivedDat = req.body;
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,"mysecretcode");
   
-     ds.execute('INSERT INTO `expense_details` (amount,description,category,user_id) VALUES(?,?,?,?)',[receivedDat.amnt,receivedDat.descr,receivedDat.catgry,user.userId]).then(resp =>{
-
+     ds.execute('INSERT INTO `expense_details` (amount,description,category,user_id) VALUES(?,?,?,?)',[receivedDat.amnt,receivedDat.descr,receivedDat.catgry,user.userId],{transaction: tran}).then( async resp =>{
+        
         ds.execute(`UPDATE users u
                         SET total_expense = (
                             SELECT SUM(e.amount)
                             FROM expense_details e
                             WHERE e.user_id = u.id
                         )
-                        WHERE u.id = ?;`,[user.userId]).then(resp => {
-
+                        WHERE u.id = ?;`,[user.userId]).then(async resp => {
+                            await tran.commit()
                             res.json({msg: 'Expense inserted successfully'});
 
-                        }).catch(err => console.log(err))
+                        }).catch(async err => {
+                            await tran.rollback()
+                            console.log(err)
+                        })
 
 
-    }).catch(err => console.log(err)) 
+    }).catch(async err => {
+        await tran.rollback();
+        console.log(err)
+    }) 
     
 })
 
-app.patch('/userpatch',(req,res)=>{
-
+app.patch('/userpatch',async (req,res)=>{
+    let tran = await sequelize.transaction();
     let received = req.body;
     let edited_amt = Number(received.amnt);
     let edt_descr = received.descr;
@@ -128,7 +143,7 @@ app.patch('/userpatch',(req,res)=>{
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,"mysecretcode");
-    ds.execute('UPDATE `expense_details` SET amount = ?,description = ?,category = ? WHERE id = ? AND user_id =?',[edited_amt,edt_descr,edt_catgry,itemId,user.userId]).then(resp => {
+    ds.execute('UPDATE `expense_details` SET amount = ?,description = ?,category = ? WHERE id = ? AND user_id =?',[edited_amt,edt_descr,edt_catgry,itemId,user.userId],{transaction: tran}).then(async resp => {
 
         ds.execute(`UPDATE users u
             SET total_expense = (
@@ -136,25 +151,34 @@ app.patch('/userpatch',(req,res)=>{
                 FROM expense_details e
                 WHERE e.user_id = u.id
             )
-            WHERE u.id = ?;`,[user.userId]).then(resp => {
-
+            WHERE u.id = ?;`,[user.userId]).then( async resp => {
+                await tran.commit();
                 res.json({msg: 'User updated successfully'})
 
-            }).catch(err => console.log(err))
+            }).catch(async err => {
+                await tran.rollback();
+                console.log(err)
+            } )
       
 
-    }).catch(err => console.log(err))
+    }).catch(async err => 
+    {
+        await tran.rollback();
+        console.log(err)
+    }
+      )
     
 
 })
 
-app.delete('/userdelete',(req,res)=>{
+app.delete('/userdelete',async (req,res)=>{
+    let tran = await sequelize.transaction();
     const receivedDat = req.body;
     const item = Number(receivedDat.itemId);
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,"mysecretcode");
-    ds.execute('DELETE FROM `expense_details` WHERE id = ? AND user_id = ?',[item,user.userId]).then(resp => {
+    ds.execute('DELETE FROM `expense_details` WHERE id = ? AND user_id = ?',[item,user.userId],{transaction: tran}).then(resp => {
 
         ds.execute(`UPDATE users u
             SET total_expense = (
@@ -162,14 +186,23 @@ app.delete('/userdelete',(req,res)=>{
                 FROM expense_details e
                 WHERE e.user_id = u.id
             )
-            WHERE u.id = ?;`,[user.userId]).then(resp => {
-
+            WHERE u.id = ?;`,[user.userId]).then(async resp => {
+                await tran.commit();
                 res.json({msg:'expense deleted successfully'});
 
-            }).catch(err => console.log(err))
+            }).catch(async err =>{ 
+               await tran.rollback();
+                console.log(err)
+            })
         
 
-    }).catch(err => console.log(err));
+    }).catch(async err => {
+
+        await tran.rollback();
+         
+        console.log(err)
+    }
+       );
    
 })
 
