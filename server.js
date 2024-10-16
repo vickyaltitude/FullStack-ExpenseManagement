@@ -100,9 +100,22 @@ app.post('/expenses',(req,res)=>{
     const user = jwt.verify(token,"mysecretcode");
   
      ds.execute('INSERT INTO `expense_details` (amount,description,category,user_id) VALUES(?,?,?,?)',[receivedDat.amnt,receivedDat.descr,receivedDat.catgry,user.userId]).then(resp =>{
-       
+
+        ds.execute(`UPDATE users u
+                        SET total_expense = (
+                            SELECT SUM(e.amount)
+                            FROM expense_details e
+                            WHERE e.user_id = u.id
+                        )
+                        WHERE u.id = ?;`,[user.userId]).then(resp => {
+
+                            res.json({msg: 'Expense inserted successfully'});
+
+                        }).catch(err => console.log(err))
+
+
     }).catch(err => console.log(err)) 
-    res.json({msg: 'Expense inserted successfully'});
+    
 })
 
 app.patch('/userpatch',(req,res)=>{
@@ -116,7 +129,20 @@ app.patch('/userpatch',(req,res)=>{
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,"mysecretcode");
     ds.execute('UPDATE `expense_details` SET amount = ?,description = ?,category = ? WHERE id = ? AND user_id =?',[edited_amt,edt_descr,edt_catgry,itemId,user.userId]).then(resp => {
-        res.json({msg: 'User updated successfully'})
+
+        ds.execute(`UPDATE users u
+            SET total_expense = (
+                SELECT SUM(e.amount)
+                FROM expense_details e
+                WHERE e.user_id = u.id
+            )
+            WHERE u.id = ?;`,[user.userId]).then(resp => {
+
+                res.json({msg: 'User updated successfully'})
+
+            }).catch(err => console.log(err))
+      
+
     }).catch(err => console.log(err))
     
 
@@ -129,7 +155,20 @@ app.delete('/userdelete',(req,res)=>{
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,"mysecretcode");
     ds.execute('DELETE FROM `expense_details` WHERE id = ? AND user_id = ?',[item,user.userId]).then(resp => {
-        res.json({msg:'checking'});
+
+        ds.execute(`UPDATE users u
+            SET total_expense = (
+                SELECT SUM(e.amount)
+                FROM expense_details e
+                WHERE e.user_id = u.id
+            )
+            WHERE u.id = ?;`,[user.userId]).then(resp => {
+
+                res.json({msg:'expense deleted successfully'});
+
+            }).catch(err => console.log(err))
+        
+
     }).catch(err => console.log(err));
    
 })
@@ -211,14 +250,9 @@ app.get('/premiumdashboard',(req,res)=>{
 })
 
 app.get('/getpremiumdata',(req,res)=>{
-    ds.execute(`SELECT SUM(expense_details.amount) AS total , expense_details.user_id ,users.name , users.email
-    FROM expense_details 
-    INNER JOIN users
-    ON expense_details.user_id = users.id
-    GROUP BY expense_details.user_id , users.name,users.email
-    ORDER BY total DESC
-    ;`).then(resp =>{
-        console.log(resp[0])
+
+   ds.execute('SELECT * FROM users ORDER BY `total_expense` DESC').then(resp =>{
+        
         res.json({msg: 'data received successfully' , data: resp[0]});
     }).catch(err => console.log(err))
 

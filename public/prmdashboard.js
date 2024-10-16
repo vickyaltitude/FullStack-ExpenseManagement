@@ -13,13 +13,12 @@ feedData()
 
 function loadData(dat){
 
-    console.log(dat)
     let trEle = document.getElementById('t-body');
 
      for(let i = 0;i<dat.length;i++){
          let newtr = document.createElement('tr');
          newtr.innerHTML = `<td>${dat[i].name}</td>
-                         <td>${dat[i].total}</td>`;
+                         <td>${dat[i].total_expense}</td>`;
          trEle.appendChild(newtr);
      }
 
