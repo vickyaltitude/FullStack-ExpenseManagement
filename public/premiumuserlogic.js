@@ -1,6 +1,7 @@
 
 
 let expForm = document.getElementById('exp-form');
+let welcome = document.getElementById('welcome')
 const getToken = localStorage.getItem('userId');
 const currentUser =  `Bearer ${getToken}`;
 let premiumBtn = document.getElementById('prm-btn');
@@ -10,15 +11,24 @@ async function getData(){
         "Authorization" : currentUser
     }});
     const parsed_details = await exp_details.json();
+    welcome.innerText = `WELCOME ${parsed_details.datas[0].name.toUpperCase()}`;
+    welcome.style.color ='#0c5fac';
     loadData(parsed_details.datas)
 }
 getData();
 
 function loadData(dat){
    let trEle = document.getElementById('t-body');
+   
     for(let i = 0;i<dat.length;i++){
         let newtr = document.createElement('tr');
-        newtr.innerHTML = `<td>${dat[i].amount}</td>
+        const date = new Date(dat[i].created_date); 
+        const options = { timeZone: 'Asia/Kolkata', hour12: false };
+        const istTime = date.toLocaleString('en-US', options);
+
+        newtr.innerHTML = `
+                        <td>${istTime}</td>
+                        <td>${dat[i].amount}</td>
                         <td>${dat[i].description}</td>
                         <td>${dat[i].category}</td>
                         <td><button id=${dat[i].id} class="edit-btn" onclick="confirmEdit(event)">Edit</button> <button id=${dat[i].id} class="delete-btn"  onclick="confirmDelete(event)">Delete</button></td>`;
@@ -69,9 +79,9 @@ function confirmDelete(e) {
 function confirmEdit(e) {
     actionType = 'edit';
     const getItems = e.target.parentNode.parentNode.children;
-    document.getElementById('edit-amount').value = getItems[0].innerHTML;
-    document.getElementById('edit-descr').value = getItems[1].innerHTML;
-    document.getElementById('edit-category').value = getItems[2].innerHTML.trim();
+    document.getElementById('edit-amount').value = getItems[1].innerHTML;
+    document.getElementById('edit-descr').value = getItems[2].innerHTML;
+    document.getElementById('edit-category').value = getItems[3].innerHTML.trim();
     document.getElementById('id-to-delete-exp').innerText = e.target.id;
 
  

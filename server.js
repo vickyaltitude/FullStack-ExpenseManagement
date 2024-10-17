@@ -105,7 +105,10 @@ app.get('/expenses',(req,res)=>{
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,"mysecretcode");
    
-    ds.execute('SELECT * FROM expense_details WHERE user_id = ?',[user.userId]).then(resp =>{
+    ds.execute(`SELECT expense_details.id AS id,amount,description,category,user_id,created_date,name
+FROM expense_details
+INNER JOIN users ON expense_details.user_id = users.id
+WHERE users.id = ?;`,[user.userId]).then(resp =>{
          let datas = resp[0];
          res.json({datas})
     }).catch(err => console.log(err));
