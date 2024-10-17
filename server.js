@@ -11,12 +11,13 @@ const Razorpay = require('razorpay');
 require('dotenv').config();
 const Sequelize = require('sequelize');
 const { v4: uuidv4 } = require('uuid');
+const AWS = require('aws-sdk');
 
 
 const Sib = require('sib-api-v3-sdk');
 const client = Sib.ApiClient.instance;
 const apikey = client.authentications['api-key'];
-apikey.apiKey = process.env.brevo_api_key; // Ensure this is set correctly
+apikey.apiKey = process.env.brevo_api_key; 
 const transEmailApi = new Sib.TransactionalEmailsApi();
 
 
@@ -407,6 +408,58 @@ app.post('/resetpassworddatabase',(req,res)=>{
    
     
 
+})
+
+function uploadData(strngfd,filen){
+    const BUCKET_NAME = 'expensetrackerprod';
+    const IAM_USER_KEY = process.env.IAM_USER_KEY;
+    const IAM_USER_SECRET = process.env.IAM_SECRET_KEY;
+
+    let s3bucket = new AWS.S3({
+        accessKeyId: IAM_USER_KEY,
+        secretAccessKey: IAM_USER_SECRET,
+    })
+
+    const params ={
+        Bucket: BUCKET_NAME,
+        Key: filen,
+        Body: strngfd,
+        ACL: 'public-read'
+    }
+
+    return new Promise((resolve,reject)=>{
+        s3bucket.upload(params,(err,data)=>{
+            if(err){
+                reject(err)
+            }else{
+                resolve(data)
+            }
+        })
+    })
+   
+}
+
+app.get('/reportdownload',(req,res)=>{
+    
+    const receivedhead = req.header("Authorization");
+    const token = receivedhead.split(' ')[1];
+    const user = jwt.verify(token,"mysecretcode");
+
+    ds.execute(`SELECT expense_details.id AS id,amount,description,category,user_id,created_date,name
+        FROM expense_details
+        INNER JOIN users ON expense_details.user_id = users.id
+        WHERE users.id = ?;`,[user.userId]).then(async resp =>{
+                 let datas = resp[0];
+                 let stringified = JSON.stringify(datas);
+                 const filename = `expense${datas[0].user_id}/${new Date()}.txt`;
+                 const fileURL = await uploadData(stringified,filename)
+                 res.json({fileURL})
+            }).catch(err => {
+                
+                console.log(err)
+                res.status(404).json({err})
+            });
+    
 })
 
 

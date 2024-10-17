@@ -5,6 +5,7 @@ let welcome = document.getElementById('welcome')
 const getToken = localStorage.getItem('userId');
 const currentUser =  `Bearer ${getToken}`;
 let premiumBtn = document.getElementById('prm-btn');
+const expReport = document.getElementById('exp-report');
 async function getData(){
     const exp_details = await fetch(`http://localhost:6969/expenses`, {
         headers:{
@@ -163,3 +164,19 @@ prmpage.addEventListener('click',()=>{
 })
 
 
+expReport.addEventListener('click',async ()=>{
+
+    let repReq = await fetch('http://localhost:6969/reportdownload',{
+        method: 'GET',
+        headers:{
+            'Content-Type' : 'application/json',
+            "Authorization" : currentUser
+        }
+    })
+    let parsedresp = await repReq.json();
+    var a = document.createElement('a');
+     a.href = parsedresp.fileURL.Location;
+     a.download = 'myexpense.csv';
+     a.click();
+    console.log(parsedresp)
+})
