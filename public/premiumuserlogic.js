@@ -16,34 +16,36 @@ async function getData(){
     const parsed_details = await exp_details.json();
     welcome.innerText = `WELCOME ${parsed_details.datas[0].name.toUpperCase()}`;
     welcome.style.color ='#0c5fac';
-    if(parsed_details.datas.length > 5) {
+    if(parsed_details.datas.length > 0){
+        let page1 = document.getElementById('page-1');
+        page1.style.display = 'block';
+        page1.addEventListener('click',pagination)
+    }
+    if(parsed_details.datas.length >= 5) {
         let page2 = document.getElementById('page-2');
         page2.style.display = 'block'
         page2.addEventListener('click',pagination)
 
-    }else if(parsed_details.datas.length > 10){
+    }if(parsed_details.datas.length >= 10){
         let page3 = document.getElementById('page-3');
         page3.style.display = 'block'
         page3.addEventListener('click',pagination)
     }
-    else if(parsed_details.datas.length > 15){
+    if(parsed_details.datas.length >= 15){
          let page4 = document.getElementById('page-4');
          page4.style.display = 'block'
          page4.addEventListener('click',pagination)
     }
-    else if(parsed_details.datas.length > 20){
+    if(parsed_details.datas.length >= 20){
          let page5 = document.getElementById('page-5');
          page5.style.display = 'block'
          page5.addEventListener('click',pagination)
     }
-    else if(parsed_details.datas.length > 25){
+    if(parsed_details.datas.length >= 25){
          let page6 = document.getElementById('page-6');
          page6.style.display = 'block'
          page6.addEventListener('click',pagination)
     }
-    
-        let page1 = document.getElementById('page-1');
-        page1.addEventListener('click',pagination)
     
     datum = parsed_details.datas;
     loadData(parsed_details.datas,0);
@@ -138,7 +140,7 @@ async function performAction(e) {
     if (actionType === 'delete') {
         let getItemId = document.getElementById('id-to-delete-exp').innerText;
 
-        let dlt_exp = await fetch('http://localhost:6969/userdelete',{
+        let dlt_exp = await fetch('http://localhost:6969/items/userdelete',{
             method: 'DELETE',
             headers:{
                 'Content-Type' : 'application/json',
@@ -163,7 +165,7 @@ async function performAction(e) {
              let edited_category =   document.getElementById('edit-category');
              let getItemId = document.getElementById('id-to-delete-exp').innerText;
        
-        let edit_exp = await fetch('http://localhost:6969/userpatch',{
+        let edit_exp = await fetch('http://localhost:6969/items/userpatch',{
             method: 'PATCH',
             headers:{
                 'Content-Type' : 'application/json',
@@ -192,13 +194,13 @@ window.onclick = function(event) {
 let prmpage = document.getElementById('gold');
 
 prmpage.addEventListener('click',()=>{
-    window.location.href = 'http://localhost:6969/premiumdashboard';
+    window.location.href = 'http://localhost:6969/premium/premiumdashboard';
 })
 
 
 expReport.addEventListener('click',async ()=>{
 
-    let repReq = await fetch('http://localhost:6969/reportdownload',{
+    let repReq = await fetch('http://localhost:6969/premium/reportdownload',{
         method: 'GET',
         headers:{
             'Content-Type' : 'application/json',

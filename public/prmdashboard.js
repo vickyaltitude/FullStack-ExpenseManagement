@@ -1,7 +1,7 @@
 
 async function feedData(){
 
-    const fetchdata = await fetch('http://localhost:6969/getpremiumdata');
+    const fetchdata = await fetch('http://localhost:6969/premium/getpremiumdata');
     const parsedData = await fetchdata.json();
     console.log(parsedData);
     loadData(parsedData.data);

@@ -14,6 +14,11 @@ async function getData(){
     welcome.innerText = `WELCOME ${parsed_details.datas[0].name.toUpperCase()}`;
     welcome.style.color ='#0c5fac';
     console.log(parsed_details.datas.length)
+    if(parsed_details.datas.length > 0){
+        let page1 = document.getElementById('page-1');
+        page1.style.display = 'block';
+        page1.addEventListener('click',pagination)
+    }
     if(parsed_details.datas.length > 5) {
         let page2 = document.getElementById('page-2');
         page2.style.display = 'block'
@@ -40,8 +45,7 @@ async function getData(){
          page6.addEventListener('click',pagination)
     }
     
-        let page1 = document.getElementById('page-1');
-        page1.addEventListener('click',pagination)
+  
     
     datum = parsed_details.datas;
     loadData(parsed_details.datas,0);
@@ -139,7 +143,7 @@ async function performAction(e) {
     if (actionType === 'delete') {
         let getItemId = document.getElementById('id-to-delete-exp').innerText;
 
-        let dlt_exp = await fetch('http://localhost:6969/userdelete',{
+        let dlt_exp = await fetch('http://localhost:6969/items/userdelete',{
             method: 'DELETE',
             headers:{
                 'Content-Type' : 'application/json',
@@ -164,7 +168,7 @@ async function performAction(e) {
              let edited_category =   document.getElementById('edit-category');
              let getItemId = document.getElementById('id-to-delete-exp').innerText;
        
-        let edit_exp = await fetch('http://localhost:6969/userpatch',{
+        let edit_exp = await fetch('http://localhost:6969/items/userpatch',{
             method: 'PATCH',
             headers:{
                 'Content-Type' : 'application/json',
@@ -194,7 +198,7 @@ premiumBtn.addEventListener('click',async (e)=>{
    e.preventDefault();
 
    try{
-    let paymentReq = await fetch(`http://localhost:6969/buypremium`, {
+    let paymentReq = await fetch(`http://localhost:6969/premium/buypremium`, {
         headers:{
         "Authorization" : currentUser
     }});
@@ -207,7 +211,7 @@ premiumBtn.addEventListener('click',async (e)=>{
         key : responsereq.key_id,
         order_id : responsereq.order_details.id,
         handler : async function(response){
-          let upd_trans =  await fetch(`http://localhost:6969/updatetransaction`, {
+          let upd_trans =  await fetch(`http://localhost:6969/items/updatetransaction`, {
                 method: 'POST', 
                 headers: {
                     "Content-Type": "application/json", 
@@ -222,7 +226,7 @@ premiumBtn.addEventListener('click',async (e)=>{
             alert('You are a premium user now');
 
             if(upd_trans.ok){
-                window.location.href = 'http://localhost:6969/premiumUserHome';
+                window.location.href = 'http://localhost:6969/home/premiumuserhome';
             }
         }
 

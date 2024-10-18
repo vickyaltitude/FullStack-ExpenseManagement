@@ -61,11 +61,11 @@ async function userlogin(e){
         loginform.removeChild(successMsg);
         if(parsed.ispremium){
 
-        window.location.href = 'http://localhost:6969/premiumUserHome';
+        window.location.href = 'http://localhost:6969/home/premiumuserhome';
             
         }else{
            
-        window.location.href = 'http://localhost:6969/home';
+        window.location.href = 'http://localhost:6969/home/home';
         }
       
 },1000)

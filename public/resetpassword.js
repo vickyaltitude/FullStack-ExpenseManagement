@@ -27,7 +27,7 @@ resetForm.addEventListener('submit',async (e)=>{
     let splitted = fullUrl.split('/')
     console.log(fullUrl.split('/'))
   
-     let sendupdatedPaswrd = await fetch('http://localhost:6969/resetpassworddatabase',{
+     let sendupdatedPaswrd = await fetch('http://localhost:6969/resetpassword/resetpassworddatabase',{
 
          method: 'POST',
          headers: {
