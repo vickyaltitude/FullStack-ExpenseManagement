@@ -4,6 +4,7 @@ let expForm = document.getElementById('exp-form');
 const getToken = localStorage.getItem('userId');
 const currentUser =  `Bearer ${getToken}`;
 let premiumBtn = document.getElementById('prm-btn');
+let datum;
 async function getData(){
     const exp_details = await fetch(`http://localhost:6969/expenses`, {
         headers:{
@@ -12,16 +13,52 @@ async function getData(){
     const parsed_details = await exp_details.json();
     welcome.innerText = `WELCOME ${parsed_details.datas[0].name.toUpperCase()}`;
     welcome.style.color ='#0c5fac';
-    loadData(parsed_details.datas)
+    console.log(parsed_details.datas.length)
+    if(parsed_details.datas.length > 5) {
+        let page2 = document.getElementById('page-2');
+        page2.style.display = 'block'
+        page2.addEventListener('click',pagination)
+
+    }else if(parsed_details.datas.length > 10){
+        let page3 = document.getElementById('page-3');
+        page3.style.display = 'block'
+        page3.addEventListener('click',pagination)
+    }
+    else if(parsed_details.datas.length > 15){
+         let page4 = document.getElementById('page-4');
+         page4.style.display = 'block'
+         page4.addEventListener('click',pagination)
+    }
+    else if(parsed_details.datas.length > 20){
+         let page5 = document.getElementById('page-5');
+         page5.style.display = 'block'
+         page5.addEventListener('click',pagination)
+    }
+    else if(parsed_details.datas.length > 25){
+         let page6 = document.getElementById('page-6');
+         page6.style.display = 'block'
+         page6.addEventListener('click',pagination)
+    }
+    
+        let page1 = document.getElementById('page-1');
+        page1.addEventListener('click',pagination)
+    
+    datum = parsed_details.datas;
+    loadData(parsed_details.datas,0);
 }
 getData();
 
-function loadData(dat){
+function loadData(dat,start){
    let trEle = document.getElementById('t-body');
-    for(let i = 0;i<dat.length;i++){
+  trEle.innerHTML = '';
+    for(let i = start;i<start+5;i++){
         let newtr = document.createElement('tr');
+        const date = new Date(dat[i].created_date); 
+        const options = { timeZone: 'Asia/Kolkata', hour12: false };
+        const istTime = date.toLocaleString('en-US', options);
+
         newtr.innerHTML = `
-                         <td>${dat[i].created_date}</td>
+                        <td>${istTime}</td>
                         <td>${dat[i].amount}</td>
                         <td>${dat[i].description}</td>
                         <td>${dat[i].category}</td>
@@ -31,6 +68,9 @@ function loadData(dat){
     
 
 }
+
+
+
 
 expForm.addEventListener('submit',async (e)=>{
     e.preventDefault();
@@ -200,3 +240,10 @@ premiumBtn.addEventListener('click',async (e)=>{
 
 
 })
+
+function pagination(e){
+    let event = e.target.id;
+    let split = event.split('-')
+    let id = Number(split[1])
+    loadData(datum,(id*5) - 5)
+}

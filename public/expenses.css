@@ -75,7 +75,7 @@ select{
    text-align: center;
 }
 
-.table-container {
+.table-container,.pagination {
     margin: 20px auto; 
     width: 80%; 
     overflow-x: auto; 
@@ -287,4 +287,29 @@ margin: 20px auto;
 
 .align{
     padding-top: 25px;
+}
+
+.pagination{
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-item{
+    width: 40px;
+    display: flex;
+    justify-content: center;
+
+}
+.page-link{
+   width:40px;
+}
+
+li{
+    list-style-type: none;
+}
+
+#page-2,#page-3,#page-4,#page-5,#page-6{
+    display: none;
 }

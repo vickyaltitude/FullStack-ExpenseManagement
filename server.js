@@ -341,7 +341,7 @@ app.get('/forgotpassword',(req,res)=>{
                  console.log(userid,uuid)
                 
              ds.execute('INSERT INTO `forgot_password_requests` VALUES (?,?,?)',[uuid,userid[0].id,true]).then(resp =>{
-                res.json({ msg: 'Password reset email sent successfully.' });
+                res.status(200).json({ msg: 'Password reset email sent successfully.' });
              }).catch(err => console.log(err));
               
             }).catch(err => console.log(err))
@@ -394,11 +394,11 @@ app.post('/resetpassworddatabase',(req,res)=>{
             else{
                ds.execute('UPDATE `users`  SET password = ? WHERE id = ?',[hash,id[0].user_id]).then(async resp =>{
                
-                    res.status(200).json({msg: 'user added successfully'})
+                    res.status(200).json({msg: 'password updated successfully'})
                 }).catch( async err => {
                   
                     console.log(err) ;
-                    res.status(404).json({msg: 'User already exist'});
+                    res.status(404).json({msg: 'failed! something went wrong'});
                 });
         
             }

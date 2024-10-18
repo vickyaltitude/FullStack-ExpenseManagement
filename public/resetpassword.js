@@ -1,6 +1,6 @@
 const resetForm = document.getElementById('reset-form')
 
-resetForm.addEventListener('click',async (e)=>{
+resetForm.addEventListener('submit',async (e)=>{
    e.preventDefault();
 
    const passwordfield = document.getElementById('passwrd').value;
@@ -9,13 +9,13 @@ resetForm.addEventListener('click',async (e)=>{
  if(passwordfield !== passwordconfirmation){
     
     const errorMsg = document.createElement('p');
-    errorMsg.innerText = 'Entered User Email is Not Found!!'
+    errorMsg.innerText = 'Please enter the same password in both the field'
     errorMsg.style.fontSize = "1.4rem";
     errorMsg.style.color = 'red';
-    resetForm.appendChild(unfMsg);
+    resetForm.appendChild(errorMsg);
 
     setTimeout(()=>{
-        loginform.removeChild(errorMsg);
+        resetForm.removeChild(errorMsg);
        
       
 },4000)
@@ -27,7 +27,7 @@ resetForm.addEventListener('click',async (e)=>{
     let splitted = fullUrl.split('/')
     console.log(fullUrl.split('/'))
   
-     const sendupdatedPaswrd = await fetch('http://localhost:6969/resetpassworddatabase',{
+     let sendupdatedPaswrd = await fetch('http://localhost:6969/resetpassworddatabase',{
 
          method: 'POST',
          headers: {
@@ -37,6 +37,25 @@ resetForm.addEventListener('click',async (e)=>{
 
      });
 
+     let parsedresp = await sendupdatedPaswrd.json();
+     console.log(parsedresp)
+      
+     if(parsedresp.msg == 'password updated successfully'){
+            
+    const successMsg = document.createElement('p');
+    successMsg.innerText = 'Password reset successfully!  Redirecting to login page...'
+    successMsg.style.fontSize = "1.4rem";
+    successMsg.style.color = 'green';
+    resetForm.appendChild(successMsg);
+
+    setTimeout(()=>{
+        resetForm.removeChild(successMsg);
+       window.location.href = 'http://localhost:6969/login'
+      
+},4000)
+     }
  }
+
+
 
 })

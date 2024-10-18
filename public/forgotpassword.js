@@ -1,4 +1,5 @@
 const forgform = document.getElementById('forg-form');
+const alertmsg = document.getElementById('alert-msg')
 
 
 forgform.addEventListener('submit',async (e)=>{
@@ -18,6 +19,14 @@ forgform.addEventListener('submit',async (e)=>{
  })
  
  const response = await sendEmail.json();
+
+ if(sendEmail.ok){
+       alertmsg.innerText = "Password reset link has been sent to the given email!  Please check"
+       alertmsg.style.color = 'green';
+       alertmsg.style.fontSize = '1.3rem';
+       alertmsg.style.padding = '0px 20px';
+
+ }
  console.log(response)
 
 })
