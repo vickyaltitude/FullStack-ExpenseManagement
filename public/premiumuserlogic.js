@@ -9,7 +9,7 @@ const expReport = document.getElementById('exp-report');
 
 let datum;
 async function getData(){
-    const exp_details = await fetch(`http://3.111.29.255:6969http://localhost:6969/expenses`, {
+    const exp_details = await fetch(`http://3.111.29.255:6969/expenses`, {
         headers:{
         "Authorization" : currentUser
     }});
