@@ -14,13 +14,14 @@ const crud = require('./routes/crud.JS');
 const premium = require('./routes/premium');
 const forgotpassword = require('./routes/forgotpassword');
 const resetpassword = require('./routes/resetpassword');
-const helmet = require('helmet');
+
 const morgan = require('morgan');
 
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags: 'a'})
 app.use(morgan('combined',{stream: accessLogStream}))
-app.use(helmet());
+
+
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname,"public")));
