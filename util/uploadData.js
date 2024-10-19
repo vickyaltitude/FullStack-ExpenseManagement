@@ -1,6 +1,6 @@
 
 const AWS = require('aws-sdk');
-
+require('dotenv').config();
 
 function uploadData(strngfd,filen){
     const BUCKET_NAME = 'expensetrackerprod';

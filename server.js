@@ -4,6 +4,7 @@ const app = express();
 const fs = require('fs');
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 6969;
+require('dotenv').config();
 
 const signup = require('./routes/signup')
 const home = require('./routes/Home');
