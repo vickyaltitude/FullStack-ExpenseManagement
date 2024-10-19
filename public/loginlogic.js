@@ -7,7 +7,7 @@ async function userlogin(e){
    const emailValue = document.getElementById('email').value;
    const passwd = document.getElementById('pswd').value;
    
-   let sendUser = await fetch('http://localhost:6969/login',{
+   let sendUser = await fetch('http://3.111.29.255:6969/login',{
     method: 'POST',
     headers: {
         "Content-Type" : 'application/json'
