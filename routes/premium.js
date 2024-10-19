@@ -11,7 +11,7 @@ router.get('/buypremium',(req,res)=>{
 
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
-    const user = jwt.verify(token,"mysecretcode");
+    const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
       console.log(user)
      let rzp = new Razorpay({
         key_id : process.env.Key_Id,
@@ -53,7 +53,7 @@ router.get('/reportdownload',(req,res)=>{
     
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
-    const user = jwt.verify(token,"mysecretcode");
+    const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
 
     ds.execute(`SELECT expense_details.id AS id,amount,description,category,user_id,created_date,name
         FROM expense_details

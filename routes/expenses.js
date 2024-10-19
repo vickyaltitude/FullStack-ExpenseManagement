@@ -3,12 +3,13 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const ds = require('../util/data');
 const sequelize = require('../util/sequelize');
+require('dotenv').config();
 
 router.get('/',(req,res)=>{
 
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
-    const user = jwt.verify(token,"mysecretcode");
+    const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
    
     ds.execute(`SELECT expense_details.id AS id,amount,description,category,user_id,created_date,name
 FROM expense_details
@@ -24,7 +25,7 @@ router.post('/',async (req,res)=>{
     const receivedDat = req.body;
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
-    const user = jwt.verify(token,"mysecretcode");
+    const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
   
      ds.execute('INSERT INTO `expense_details` (amount,description,category,user_id) VALUES(?,?,?,?)',[receivedDat.amnt,receivedDat.descr,receivedDat.catgry,user.userId],{transaction: tran}).then( async resp =>{
         
