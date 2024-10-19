@@ -9,7 +9,7 @@ const expReport = document.getElementById('exp-report');
 
 let datum;
 async function getData(){
-    const exp_details = await fetch(`http://localhost:6969/expenses`, {
+    const exp_details = await fetch(`http://3.111.29.255:6969http://localhost:6969/expenses`, {
         headers:{
         "Authorization" : currentUser
     }});
@@ -82,7 +82,7 @@ expForm.addEventListener('submit',async (e)=>{
 
     
 
-    let add_exp = await fetch('http://localhost:6969/expenses',{
+    let add_exp = await fetch('http://3.111.29.255:6969/expenses',{
         method: 'POST',
         headers:{
             'Content-Type' : 'application/json',
@@ -140,7 +140,7 @@ async function performAction(e) {
     if (actionType === 'delete') {
         let getItemId = document.getElementById('id-to-delete-exp').innerText;
 
-        let dlt_exp = await fetch('http://localhost:6969/items/userdelete',{
+        let dlt_exp = await fetch('http://3.111.29.255:6969/items/userdelete',{
             method: 'DELETE',
             headers:{
                 'Content-Type' : 'application/json',
@@ -165,7 +165,7 @@ async function performAction(e) {
              let edited_category =   document.getElementById('edit-category');
              let getItemId = document.getElementById('id-to-delete-exp').innerText;
        
-        let edit_exp = await fetch('http://localhost:6969/items/userpatch',{
+        let edit_exp = await fetch('http://3.111.29.255:6969/items/userpatch',{
             method: 'PATCH',
             headers:{
                 'Content-Type' : 'application/json',
@@ -194,13 +194,13 @@ window.onclick = function(event) {
 let prmpage = document.getElementById('gold');
 
 prmpage.addEventListener('click',()=>{
-    window.location.href = 'http://localhost:6969/premium/premiumdashboard';
+    window.location.href = 'http://3.111.29.255:6969/premium/premiumdashboard';
 })
 
 
 expReport.addEventListener('click',async ()=>{
 
-    let repReq = await fetch('http://localhost:6969/premium/reportdownload',{
+    let repReq = await fetch('http://3.111.29.255:6969/premium/reportdownload',{
         method: 'GET',
         headers:{
             'Content-Type' : 'application/json',
