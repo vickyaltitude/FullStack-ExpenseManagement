@@ -14,6 +14,7 @@ async function getData(){
         "Authorization" : currentUser
     }});
     const parsed_details = await exp_details.json();
+    
     welcome.innerText = `WELCOME ${parsed_details.datas[0].name.toUpperCase()}`;
     welcome.style.color ='#0c5fac';
     if(parsed_details.datas.length > 0){
