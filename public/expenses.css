@@ -288,4 +288,8 @@ li {
     #data-table {
         font-size: 0.9rem; 
     }
+    #gold {
+        width: 100%; 
+        margin-top: 20px; 
+    }
 }
