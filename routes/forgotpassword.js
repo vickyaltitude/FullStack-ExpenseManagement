@@ -35,7 +35,7 @@ router.get('/',(req,res)=>{
             sender,
             to: receiver,
             subject: 'Password reset link from Day-to-Day Expense Tracker Application',
-             htmlContent: `<p>Please reset your password through this link: <a href="http://65.0.125.13:6969/resetpassword/${uuid}">Reset Password</a></p>`
+             htmlContent: `<p>Please reset your password through this link: <a href="http://13.233.144.215:6969/resetpassword/${uuid}">Reset Password</a></p>`
         })
         .then(response => {
 

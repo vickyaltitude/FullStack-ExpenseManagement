@@ -6,7 +6,7 @@ const currentUser =  `Bearer ${getToken}`;
 let premiumBtn = document.getElementById('prm-btn');
 let datum;
 async function getData(){
-    const exp_details = await fetch(`http://65.0.125.13:6969/expenses`, {
+    const exp_details = await fetch(`http://13.233.144.215:6969/expenses`, {
         headers:{
         "Authorization" : currentUser
     }});
@@ -85,7 +85,7 @@ expForm.addEventListener('submit',async (e)=>{
 
     
 
-    let add_exp = await fetch('http://65.0.125.13:6969/expenses',{
+    let add_exp = await fetch('http://13.233.144.215:6969/expenses',{
         method: 'POST',
         headers:{
             'Content-Type' : 'application/json',
@@ -143,7 +143,7 @@ async function performAction(e) {
     if (actionType === 'delete') {
         let getItemId = document.getElementById('id-to-delete-exp').innerText;
 
-        let dlt_exp = await fetch('http://65.0.125.13:6969/items/userdelete',{
+        let dlt_exp = await fetch('http://13.233.144.215:6969/items/userdelete',{
             method: 'DELETE',
             headers:{
                 'Content-Type' : 'application/json',
@@ -168,7 +168,7 @@ async function performAction(e) {
              let edited_category =   document.getElementById('edit-category');
              let getItemId = document.getElementById('id-to-delete-exp').innerText;
        
-        let edit_exp = await fetch('http://65.0.125.13:6969/items/userpatch',{
+        let edit_exp = await fetch('http://13.233.144.215:6969/items/userpatch',{
             method: 'PATCH',
             headers:{
                 'Content-Type' : 'application/json',
@@ -198,7 +198,7 @@ premiumBtn.addEventListener('click',async (e)=>{
    e.preventDefault();
 
    try{
-    let paymentReq = await fetch(`http://65.0.125.13:6969/premium/buypremium`, {
+    let paymentReq = await fetch(`http://13.233.144.215:6969/premium/buypremium`, {
         headers:{
         "Authorization" : currentUser
     }});
@@ -211,7 +211,7 @@ premiumBtn.addEventListener('click',async (e)=>{
         key : responsereq.key_id,
         order_id : responsereq.order_details.id,
         handler : async function(response){
-          let upd_trans =  await fetch(`http://65.0.125.13:6969/items/updatetransaction`, {
+          let upd_trans =  await fetch(`http://13.233.144.215:6969/items/updatetransaction`, {
                 method: 'POST', 
                 headers: {
                     "Content-Type": "application/json", 
@@ -226,7 +226,7 @@ premiumBtn.addEventListener('click',async (e)=>{
             alert('You are a premium user now');
 
             if(upd_trans.ok){
-                window.location.href = 'http://65.0.125.13:6969/home/premiumuserhome';
+                window.location.href = 'http://13.233.144.215:6969/home/premiumuserhome';
             }
         }
 
