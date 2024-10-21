@@ -58,18 +58,15 @@ async function userlogin(e){
     successMsg.style.color = 'green';
     loginform.appendChild(successMsg);
 
-    setTimeout(()=>{
+    setTimeout(() => {
         loginform.removeChild(successMsg);
-        if(parsed.ispremium){
+        const redirectUrl = parsed.ispremium 
+            ? 'http://13.233.144.215:6969/home/premiumuserhome'
+            : 'http://13.233.144.215:6969/home/home';
 
-        window.location.href = 'http://13.233.144.215:6969/home/premiumuserhome';
-            
-        }else{
-           
-        window.location.href = 'http://13.233.144.215:6969/home/home';
-        }
-      
-},1000)
+        
+        window.location.replace(redirectUrl);
+    }, 1000);
 
    }
    
