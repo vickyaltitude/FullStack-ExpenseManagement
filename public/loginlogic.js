@@ -50,6 +50,7 @@ async function userlogin(e){
     },3000)
        }
    } else if(sendUser.ok) {
+    console.log(parsed.ispremium,parsed.userId)
       localStorage.setItem('userId',parsed.userId);
        const successMsg = document.createElement('p');
     successMsg.innerText = 'Login successful'
