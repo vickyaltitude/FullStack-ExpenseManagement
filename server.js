@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const fs = require('fs');
+const cors = require('cors');
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 6969;
 require('dotenv').config();
@@ -21,8 +22,11 @@ const morgan = require('morgan');
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{flags: 'a'})
 app.use(morgan('combined',{stream: accessLogStream}))
-
-
+app.use(cors({
+    origin: 'http://localhost:6969',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], 
+    credentials: true
+}));
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static(path.join(__dirname,"public")));
