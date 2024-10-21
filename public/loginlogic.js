@@ -7,7 +7,7 @@ async function userlogin(e){
    const emailValue = document.getElementById('email').value;
    const passwd = document.getElementById('pswd').value;
    
-   let sendUser = await fetch('http://3.111.29.255:6969/login',{
+   let sendUser = await fetch('http://65.0.125.13:6969/login',{
     method: 'POST',
     headers: {
         "Content-Type" : 'application/json'
@@ -61,11 +61,11 @@ async function userlogin(e){
         loginform.removeChild(successMsg);
         if(parsed.ispremium){
 
-        window.location.href = 'http://3.111.29.255:6969/home/premiumuserhome';
+        window.location.href = 'http://65.0.125.13:6969/home/premiumuserhome';
             
         }else{
            
-        window.location.href = 'http://3.111.29.255:6969/home/home';
+        window.location.href = 'http://65.0.125.13:6969/home/home';
         }
       
 },1000)

@@ -8,7 +8,7 @@ async function userInsert(e){
    const emailValue = document.getElementById('email').value;
    const passwd = document.getElementById('pswd').value;
    
-   let sendUser = await fetch('http://3.111.29.255:6969/insertuser',{
+   let sendUser = await fetch('http://65.0.125.13:6969/insertuser',{
     method: 'POST',
     headers: {
         "Content-Type" : 'application/json'
@@ -43,7 +43,7 @@ async function userInsert(e){
 
     setTimeout(()=>{
             signupform.removeChild(successMsg);
-            window.location.href = 'http://3.111.29.255:6969/login';
+            window.location.href = 'http://65.0.125.13:6969/login';
            
           
     },3000)
