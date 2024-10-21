@@ -35,4 +35,36 @@ router.get('/', (req, res) => {
     });
 });
 
+app.post('/expenses',async (req,res)=>{
+    let tran = await sequelize.transaction();
+    const receivedDat = req.body;
+    const receivedhead = req.header("Authorization");
+    const token = receivedhead.split(' ')[1];
+    const user = jwt.verify(token,"mysecretcode");
+  
+     ds.execute('INSERT INTO `expense_details` (amount,description,category,user_id) VALUES(?,?,?,?)',[receivedDat.amnt,receivedDat.descr,receivedDat.catgry,user.userId],{transaction: tran}).then( async resp =>{
+        
+        ds.execute(`UPDATE users u
+                        SET total_expense = (
+                            SELECT SUM(e.amount)
+                            FROM expense_details e
+                            WHERE e.user_id = u.id
+                        )
+                        WHERE u.id = ?;`,[user.userId]).then(async resp => {
+                            await tran.commit()
+                            res.json({msg: 'Expense inserted successfully'});
+
+                        }).catch(async err => {
+                            await tran.rollback()
+                            console.log(err)
+                        })
+
+
+    }).catch(async err => {
+        await tran.rollback();
+        console.log(err)
+    }) 
+    
+})
+
 module.exports = router;
