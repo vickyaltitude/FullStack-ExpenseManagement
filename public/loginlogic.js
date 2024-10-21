@@ -51,7 +51,7 @@ async function userlogin(e){
        }
    } else if(sendUser.ok) {
     console.log(parsed.ispremium,parsed.userId)
-      localStorage.setItem('userId',parsed.userId);
+      sessionStorage.setItem('userId',parsed.userId);
        const successMsg = document.createElement('p');
     successMsg.innerText = 'Login successful'
     successMsg.style.fontSize = "1.4rem";

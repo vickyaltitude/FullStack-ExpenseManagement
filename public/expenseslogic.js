@@ -1,7 +1,7 @@
 
 let welcome = document.getElementById('welcome')
 let expForm = document.getElementById('exp-form');
-const getToken = localStorage.getItem('userId');
+const getToken = sessionStorage.getItem('userId');
 const currentUser =  `Bearer ${getToken}`;
 let premiumBtn = document.getElementById('prm-btn');
 let datum;
