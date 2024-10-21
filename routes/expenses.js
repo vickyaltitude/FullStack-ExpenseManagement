@@ -35,7 +35,7 @@ router.get('/', (req, res) => {
     });
 });
 
-app.post('/expenses',async (req,res)=>{
+app.post('/',async (req,res)=>{
     let tran = await sequelize.transaction();
     const receivedDat = req.body;
     const receivedhead = req.header("Authorization");
