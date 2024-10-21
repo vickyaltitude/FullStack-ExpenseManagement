@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const ds = require('../util/data');
+const ds = require('../model/data');
 require('dotenv').config();
 
 router.get('/', (req, res) => {
@@ -12,7 +12,7 @@ router.get('/', (req, res) => {
 
     const token = receivedhead.split(' ')[1];
     let user;
-
+    console.log(token)
     try {
         user = jwt.verify(token, process.env.JWT_TOKEN_SECRET);
     } catch (err) {

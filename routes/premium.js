@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const uploadData = require('../util/uploadData');
+const uploadData = require('../model/uploadData');
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
-const ds = require('../util/data');
+const ds = require('../model/data');
 require('dotenv').config();
 
 router.get('/buypremium',(req,res)=>{

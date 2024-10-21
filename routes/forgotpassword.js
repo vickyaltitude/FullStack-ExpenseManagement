@@ -7,7 +7,7 @@ const client = Sib.ApiClient.instance;
 const apikey = client.authentications['api-key'];
 apikey.apiKey = process.env.brevo_api_key; 
 let transEmailApi = new Sib.TransactionalEmailsApi();
-const ds = require('../util/data');
+const ds = require('../model/data');
 
 
 router.get('/',(req,res)=>{
