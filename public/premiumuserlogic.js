@@ -9,7 +9,7 @@ const expReport = document.getElementById('exp-report');
 
 let datum;
 async function getData(){
-    const exp_details = await fetch(`http://13.233.144.215/expenses`, {
+    const exp_details = await fetch(`http://15.207.89.166/expenses`, {
         headers:{
         "Authorization" : currentUser
     }});
@@ -83,7 +83,7 @@ expForm.addEventListener('submit',async (e)=>{
 
     
 
-    let add_exp = await fetch('http://13.233.144.215/expenses',{
+    let add_exp = await fetch('http://15.207.89.166/expenses',{
         method: 'POST',
         headers:{
             'Content-Type' : 'application/json',
@@ -141,7 +141,7 @@ async function performAction(e) {
     if (actionType === 'delete') {
         let getItemId = document.getElementById('id-to-delete-exp').innerText;
 
-        let dlt_exp = await fetch('http://13.233.144.215/items/userdelete',{
+        let dlt_exp = await fetch('http://15.207.89.166/items/userdelete',{
             method: 'DELETE',
             headers:{
                 'Content-Type' : 'application/json',
@@ -166,7 +166,7 @@ async function performAction(e) {
              let edited_category =   document.getElementById('edit-category');
              let getItemId = document.getElementById('id-to-delete-exp').innerText;
        
-        let edit_exp = await fetch('http://13.233.144.215/items/userpatch',{
+        let edit_exp = await fetch('http://15.207.89.166/items/userpatch',{
             method: 'PATCH',
             headers:{
                 'Content-Type' : 'application/json',
@@ -195,13 +195,13 @@ window.onclick = function(event) {
 let prmpage = document.getElementById('gold');
 
 prmpage.addEventListener('click',()=>{
-    window.location.href = 'http://13.233.144.215/premium/premiumdashboard';
+    window.location.href = 'http://15.207.89.166/premium/premiumdashboard';
 })
 
 
 expReport.addEventListener('click',async ()=>{
 
-    let repReq = await fetch('http://13.233.144.215/premium/reportdownload',{
+    let repReq = await fetch('http://15.207.89.166/premium/reportdownload',{
         method: 'GET',
         headers:{
             'Content-Type' : 'application/json',
