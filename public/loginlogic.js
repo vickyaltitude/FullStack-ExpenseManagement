@@ -7,7 +7,7 @@ async function userlogin(e){
    const emailValue = document.getElementById('email').value;
    const passwd = document.getElementById('pswd').value;
    
-   let sendUser = await fetch('http://15.207.89.166/login',{
+   let sendUser = await fetch('http://43.204.237.132/login',{
     method: 'POST',
     headers: {
         "Content-Type" : 'application/json'
@@ -61,8 +61,8 @@ async function userlogin(e){
     setTimeout(() => {
         loginform.removeChild(successMsg);
         const redirectUrl = parsed.ispremium 
-            ? 'http://15.207.89.166/home/premiumuserhome'
-            : 'http://15.207.89.166/home/home';
+            ? 'http://43.204.237.132/home/premiumuserhome'
+            : 'http://43.204.237.132/home/home';
 
         
         window.location.replace(redirectUrl);

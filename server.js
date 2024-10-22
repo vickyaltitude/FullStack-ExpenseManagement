@@ -24,7 +24,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname,'access.log'),{
 app.use(morgan('combined',{stream: accessLogStream}))
 
 app.use(cors({
-    origin: 'http://15.207.89.166',
+    origin: 'http://43.204.237.132',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));

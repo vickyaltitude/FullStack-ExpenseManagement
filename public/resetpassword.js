@@ -27,7 +27,7 @@ resetForm.addEventListener('submit',async (e)=>{
     let splitted = fullUrl.split('/')
     console.log(fullUrl.split('/'))
   
-     let sendupdatedPaswrd = await fetch('http://15.207.89.166/resetpassword/resetpassworddatabase',{
+     let sendupdatedPaswrd = await fetch('http://43.204.237.132/resetpassword/resetpassworddatabase',{
 
          method: 'POST',
          headers: {
@@ -50,7 +50,7 @@ resetForm.addEventListener('submit',async (e)=>{
 
     setTimeout(()=>{
         resetForm.removeChild(successMsg);
-       window.location.href = 'http://15.207.89.166/login'
+       window.location.href = 'http://43.204.237.132/login'
       
 },4000)
      }

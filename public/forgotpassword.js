@@ -9,7 +9,7 @@ forgform.addEventListener('submit',async (e)=>{
  const emailfield = document.getElementById('email').value;
  console.log(emailfield);
 
- const sendEmail = await fetch('http://15.207.89.166/forgotpassword',{
+ const sendEmail = await fetch('http://43.204.237.132/forgotpassword',{
     method : 'POST',
     headers: {
         'Content-Type' : 'application/json'
