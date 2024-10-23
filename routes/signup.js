@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const path = require('path');
+const signupForm = require('../controller/signupForm');
 
-router.get('/',(req,res)=>{
-    res.sendFile(path.join(__dirname,'..','view','signup.html'))
-})
+router.get('/',signupForm.signupForm);
 
 module.exports = router

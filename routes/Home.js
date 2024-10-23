@@ -1,15 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const home = require('../controller/home');
 
 
 
-router.get('/home',(req,res)=>{
-    res.sendFile(path.join(__dirname,'..','view','expensespage.html'))
-})
+router.get('/home',home.normalDashboard);
 
-router.get('/premiumuserhome',(req,res)=>{
-    res.sendFile(path.join(__dirname,'..','view','premiumUser.html'))
-})
+router.get('/premiumuserhome',home.premiumUserDashboard);
 
 module.exports = router;
