@@ -2,12 +2,13 @@
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
 
+const ForgotPassReq = require('../util/forgotPassReq');
+const User = require('../util/users');
 const Sib = require('sib-api-v3-sdk');
 const client = Sib.ApiClient.instance;
 const apikey = client.authentications['api-key'];
 apikey.apiKey = process.env.brevo_api_key; 
 let transEmailApi = new Sib.TransactionalEmailsApi();
-const ds = require('../util/data');
 
 module.exports.sendLoginForm = (req,res)=>{
 
@@ -39,15 +40,24 @@ module.exports.sendLoginForm = (req,res)=>{
         .then(response => {
 
             console.log(response,receiverEmail);
-            ds.execute('SELECT id FROM users WHERE email = ?',[receiverEmail]).then(resp =>{
-                 const userid = resp[0]
-                 console.log(userid,uuid)
-                
-             ds.execute('INSERT INTO `forgot_password_requests` VALUES (?,?,?)',[uuid,userid[0].id,true]).then(resp =>{
-                res.status(200).json({ msg: 'Password reset email sent successfully.' });
-             }).catch(err => console.log(err));
-              
-            }).catch(err => console.log(err))
+            
+            User.find({email: receiverEmail}).then(result =>{
+                console.log(result)
+
+                ForgotPassReq.create({UUid: uuid,user_id:result[0]._id,isactive:true}).then(result =>{
+                      
+                    res.status(200).json({ msg: 'Password reset email sent successfully.' });
+
+                }).catch(err =>{
+                    console.log(err)
+                    res.status(500).json({msg:'error while inserting into forgatpassword collection'})
+                })
+
+            }).catch(err =>{
+                console.log(err)
+                res.status(500).json({msg:'error while getting userId'})
+            })
+
            
         })
         .catch(error => {

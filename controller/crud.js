@@ -1,80 +1,123 @@
-const ds = require('../util/data');
-const sequelize = require('../util/sequelize');
+
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const expDetails = require('../util/expDetails');
+const mongoose = require('mongoose');
+const User = require('../util/users');
+const PremiumTrans = require('../util/premTrans');
 
 
 module.exports.updateUser = async (req,res)=>{
 
-    let tran = await sequelize.transaction();
+   
     let received = req.body;
     let edited_amt = Number(received.amnt);
     let edt_descr = received.descr;
     let edt_catgry = received.catgry;
-    let itemId = Number(received.itemId);
+    let itemId = received.itemId;
+    console.log('check update',itemId)
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
-    ds.execute('UPDATE `expense_details` SET amount = ?,description = ?,category = ? WHERE id = ? AND user_id =?',[edited_amt,edt_descr,edt_catgry,itemId,user.userId],{transaction: tran}).then(async resp => {
+ console.log('check update',user.userId)
+      expDetails.updateOne({_id : new mongoose.Types.ObjectId(itemId),user_id: new mongoose.Types.ObjectId(user.userId) },{
+          amount: edited_amt,
+          description: edt_descr,
+          category: edt_catgry
+      }).then(result =>{
+         
+        expDetails.aggregate([
+            { $match: { user_id: new mongoose.Types.ObjectId(user.userId) } },
+            { $group: {
+                _id: '$user_id',
+                totalExpense: { $sum: '$amount' } 
+            }}
+        ])
+        .then(total => {
+          console.log('checking total',total)
+            if (!total || total.length === 0) {
+                return res.status(404).json({ msg: 'No expenses found for this user' });
+            }
 
-        ds.execute(`UPDATE users u
-            SET total_expense = (
-                SELECT SUM(e.amount)
-                FROM expense_details e
-                WHERE e.user_id = u.id
+            User.updateOne(
+              
+                { _id: new mongoose.Types.ObjectId(user.userId) }, 
+                { total_expense: total[0].totalExpense }
             )
-            WHERE u.id = ?;`,[user.userId]).then( async resp => {
-                await tran.commit();
-                res.json({msg: 'User updated successfully'})
+            .then(() => {
+                res.json({ msg: 'Expense inserted successfully' });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ msg: 'Error while updating total expense' });
 
-            }).catch(async err => {
-                await tran.rollback();
-                console.log(err)
-            } )
-      
+            });
 
-    }).catch(async err => 
-    {
-        await tran.rollback();
-        console.log(err)
-    }
-      )
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ msg: 'Error while calculating total expenses' });
+        });
+
+      }).catch(err =>{
+          console.log(err)
+          res.status(500).json({ msg: 'Error while updating  expense' });
+      })
+    
     
 
 }
 
 module.exports.deleteUser = async (req,res)=>{
-    let tran = await sequelize.transaction();
+    
     const receivedDat = req.body;
-    const item = Number(receivedDat.itemId);
+    const item = receivedDat.itemId;
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
-    ds.execute('DELETE FROM `expense_details` WHERE id = ? AND user_id = ?',[item,user.userId],{transaction: tran}).then(resp => {
 
-        ds.execute(`UPDATE users u
-            SET total_expense = (
-                SELECT SUM(e.amount)
-                FROM expense_details e
-                WHERE e.user_id = u.id
+    expDetails.findOneAndDelete({ _id:  new mongoose.Types.ObjectId(item),user_id: new mongoose.Types.ObjectId(user.userId) }).then(result =>{
+
+        expDetails.aggregate([
+            { $match: { user_id: new mongoose.Types.ObjectId(user.userId) } },
+            { $group: {
+                _id: '$user_id',
+                totalExpense: { $sum: '$amount' } 
+            }}
+        ])
+        .then(total => {
+          console.log('checking delete total',total)
+            if (!total || total.length === 0) {
+                return res.status(404).json({ msg: 'No expenses found for this user' });
+            }
+
+            User.updateOne(
+              
+                { _id: new mongoose.Types.ObjectId(user.userId) }, 
+                { total_expense: total[0].totalExpense }
             )
-            WHERE u.id = ?;`,[user.userId]).then(async resp => {
-                await tran.commit();
+            .then(() => {
                 res.json({msg:'expense deleted successfully'});
-
-            }).catch(async err =>{ 
-               await tran.rollback();
-                console.log(err)
             })
-        
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ msg: 'Error while updating total expense' });
 
-    }).catch(async err => {
+            });
 
-        await tran.rollback();
-         
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ msg: 'Error while calculating total expenses' });
+        });
+
+    }).catch(err =>{
+
         console.log(err)
-    }
-       );
+
+    })
+
+    
    
 }
 
@@ -84,35 +127,29 @@ module.exports.updateTransaction = (req,res)=>{
     const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
    
    if(req.body.payment_id){
-    ds.execute('UPDATE `premium_transactions` SET payment_id = ?,status = ? WHERE order_id =?',[req.body.payment_id,"succes",req.body.order_id]).then(resp => {
-        res.json({msg: 'payment success'});
 
-
-
-    }).catch(err =>{
-
-        console.log(err)
-
+    PremiumTrans.updateOne({order_id: req.body.order_id},{payment_id : req.body.payment_id,status: "success"}).then(result =>{
+          
+        User.updateOne({_id: new mongoose.Types.ObjectId(user.userId)},{ispremium: true}).then(result =>{
+             console.log(result,'transaction update result')
+             res.json({msg: 'payment success'});
+        })
+            
     })
 
-    ds.execute('UPDATE users SET ispremium = ? WHERE id =?',[true,user.userId]).then(resp => {
-     
-
-    }).catch(err =>{
-
-        console.log(err)
-
-    })
    
    }else{
 
-    ds.execute('UPDATE `premium_transactions` SET status = ? WHERE order_id = ?',["failed",req.body.order_id]).then(resp => {
-        res.json({msg: 'payment failed'});
-    }).catch(err =>{
+    PremiumTrans.updateOne({order_id: req.body.order_id},{stauts: "failed"}).then( result =>{
 
-        console.log(err)
+        res.json({msg: 'payment failed'});
+
+    }).catch( err => {
+
+         console.log(err)
 
     })
+
   
    }
 

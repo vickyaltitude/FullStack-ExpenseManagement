@@ -1,8 +1,10 @@
 const path = require('path');
 const uploadData = require('../util/uploadData');
+const PremTransactionSchema = require('../util/premTrans');
+const User = require('../util/users');
+const ExpDetails = require('../util/expDetails');
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
-const ds = require('../util/data');
 require('dotenv').config();
 
 module.exports.premiumBuy = (req,res)=>{
@@ -21,11 +23,16 @@ module.exports.premiumBuy = (req,res)=>{
            if(err){
             console.log(err)
            }else{
-            ds.execute('INSERT INTO `premium_transactions` (user_name,order_id,user_id,status) VALUES(?,?,?,?)',[user.userName,order.id,user.userId,'pending']).then(resp =>{
+           
+            PremTransactionSchema.create({user_name: user.userName,order_id:order.id,user_id: user.userId,status:'pending'}).then(result =>{
 
                 res.json({order_details : order,key_id: process.env.Key_Id });
 
-            }).catch(err => console.log(err)) 
+            }).catch(err =>{
+                console.log(err);
+                res.status(500).json({msg: 'error while inserting into transaction db'})
+            })
+
            
            }
      })
@@ -39,12 +46,23 @@ module.exports.premiumDashboardList = (req,res)=>{
 
 module.exports.premiumListAPI = (req,res)=>{
 
-    ds.execute('SELECT * FROM users ORDER BY `total_expense` DESC').then(resp =>{
-         
-         res.json({msg: 'data received successfully' , data: resp[0]});
-     }).catch(err => console.log(err))
- 
-    
+
+    User.find()
+  .sort({ total_expense: -1 })
+  .exec()
+  .then(expenses => {
+
+    console.log('Expenses ordered by amount (desc):', expenses);
+    res.json({msg: 'data received successfully' ,  expenses});
+
+  })
+  .catch(err => {
+
+    console.error('Error fetching expenses:', err);
+    res.status(500).json({msg:'error while fetching for premium dashboard'})
+  });
+
+   
  }
 
  module.exports.reportDownload = (req,res)=>{
@@ -53,19 +71,21 @@ module.exports.premiumListAPI = (req,res)=>{
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
 
-    ds.execute(`SELECT expense_details.id AS id,amount,description,category,user_id,created_date,name
-        FROM expense_details
-        INNER JOIN users ON expense_details.user_id = users.id
-        WHERE users.id = ?;`,[user.userId]).then(async resp =>{
-                 let datas = resp[0];
+    ExpDetails.find({user_id : user.userId}).then(async result =>{
+
+              console.log(result)
+                 let datas = result;
                  let stringified = JSON.stringify(datas);
                  const filename = `expense${datas[0].user_id}/${new Date()}.txt`;
                  const fileURL = await uploadData(stringified,filename)
                  res.json({fileURL})
-            }).catch(err => {
+
+    }).catch(err => {
                 
-                console.log(err)
-                res.status(404).json({err})
-            });
+        console.log(err)
+        res.status(404).json({err})
+    });
+
+
     
 }

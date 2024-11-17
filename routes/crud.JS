@@ -1,8 +1,8 @@
-const ds = require('../util/data');
+
 const express = require('express');
 const router = express.Router();
 const path = require('path');
-const sequelize = require('../util/sequelize');
+
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const crud = require('../controller/crud');

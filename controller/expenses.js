@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
-const ds = require('../util/data');
-const sequelize = require('../util/sequelize');
 require('dotenv').config();
+const Expense = require('../util/expDetails');
+const User = require('../util/users')
+const mongoose = require('mongoose');
 
 
 module.exports.expensesAPI = (req,res)=>{
@@ -9,44 +10,73 @@ module.exports.expensesAPI = (req,res)=>{
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
+
+    console.log(user)
+
+
+
+    Expense.find({ user_id: new mongoose.Types.ObjectId(user.userId) })
+    .select('id amount description category createdDateTime user_id') 
+    .populate('user_id', 'name')  
+    .then(expenses => {
+        console.log(expenses)
+        res.json(expenses);
+    })
+    .catch(err => {
+        console.error(err);
+        res.status(500).json({ msg: 'Error retrieving expenses' });
+    });
    
-    ds.execute(`SELECT expense_details.id AS id,amount,description,category,user_id,created_date,name
-FROM expense_details
-INNER JOIN users ON expense_details.user_id = users.id
-WHERE users.id = ?;`,[user.userId]).then(resp =>{
-         let datas = resp[0];
-         res.json({datas})
-    }).catch(err => console.log(err));
 }
 
 module.exports.addExpense = async (req,res)=>{
-    let tran = await sequelize.transaction();
+  
     const receivedDat = req.body;
     const receivedhead = req.header("Authorization");
     const token = receivedhead.split(' ')[1];
     const user = jwt.verify(token,process.env.JWT_TOKEN_SECRET);
+
+     Expense.create({amount: receivedDat.amnt,description: receivedDat.descr,category: receivedDat.catgry,user_id:user.userId}).then(result =>{
+        Expense.aggregate([
+            { $match: { user_id: new mongoose.Types.ObjectId(user.userId) } },
+            { $group: {
+                _id: '$user_id',
+                totalExpense: { $sum: '$amount' } 
+            }}
+        ])
+        .then(total => {
+          console.log(total)
+            if (!total || total.length === 0) {
+                return res.status(404).json({ msg: 'No expenses found for this user' });
+            }
+
+
+            User.updateOne(
+                { _id: new mongoose.Types.ObjectId(user.userId) }, 
+                { total_expense: total[0].totalExpense }
+            )
+            .then(() => {
+                res.json({ msg: 'Expense inserted successfully' });
+            })
+            .catch(err => {
+                console.error(err);
+                res.status(500).json({ msg: 'Error while updating total expense' });
+
+            });
+
+
+        })
+        .catch(err => {
+            console.error(err);
+            res.status(500).json({ msg: 'Error while calculating total expenses' });
+        });
+
+     }).catch(err => {
+        console.error(err);
+        res.status(500).json({ msg: 'Error while inserting expense' });
+    });
+
+
+};
   
-     ds.execute('INSERT INTO `expense_details` (amount,description,category,user_id) VALUES(?,?,?,?)',[receivedDat.amnt,receivedDat.descr,receivedDat.catgry,user.userId],{transaction: tran}).then( async resp =>{
-        
-        ds.execute(`UPDATE users u
-                        SET total_expense = (
-                            SELECT SUM(e.amount)
-                            FROM expense_details e
-                            WHERE e.user_id = u.id
-                        )
-                        WHERE u.id = ?;`,[user.userId]).then(async resp => {
-                            await tran.commit()
-                            res.json({msg: 'Expense inserted successfully'});
-
-                        }).catch(async err => {
-                            await tran.rollback()
-                            console.log(err)
-                        })
-
-
-    }).catch(async err => {
-        await tran.rollback();
-        console.log(err)
-    }) 
-    
-}
+   

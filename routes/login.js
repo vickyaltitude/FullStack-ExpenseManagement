@@ -3,7 +3,6 @@ const router = express.Router();
 const path = require('path');
 const generatedToken = require('../jwt');
 const bcrypt = require('bcrypt');
-const ds = require('../util/data');
 const login = require('../controller/login');
 
 

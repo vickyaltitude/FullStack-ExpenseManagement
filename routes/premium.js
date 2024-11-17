@@ -4,7 +4,6 @@ const path = require('path');
 const uploadData = require('../util/uploadData');
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
-const ds = require('../util/data');
 require('dotenv').config();
 const premium = require('../controller/premium');
 

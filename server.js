@@ -6,6 +6,7 @@ const cors = require('cors');
 const bodyParser = require("body-parser");
 const PORT = process.env.PORT || 6969;
 require('dotenv').config();
+const mongoose = require('mongoose');
 
 const signup = require('./routes/signup')
 const home = require('./routes/Home');
@@ -62,6 +63,8 @@ app.use('/resetpassword',resetpassword)
 
 
 
+mongoose.connect('mongodb://localhost:27017/expense_tracker').then(result =>{
+    
+     app.listen(PORT,()=> console.log(`server is successfully running on port ${PORT}`))
+}).catch(err => console.log(err))
 
-
-app.listen(PORT,()=> console.log(`server is successfully running on port ${PORT}`))
